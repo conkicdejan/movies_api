@@ -16,7 +16,7 @@ class MovieController extends Controller
      */
     public function index()
     {
-        $movies = Movie::with('category')->latest()->get();
+        $movies = Movie::with('category')->latest()->paginate(10);
         foreach ($movies as $movie) {
             $movie['description'] = Str::limit($movie['description'], 40, ' ...');
         }
