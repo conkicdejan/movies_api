@@ -1,6 +1,8 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\MovieController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -24,4 +26,24 @@ Route::group([
     Route::post('login', 'login');
     Route::post('logout', 'logout')->middleware('auth');
     Route::get('me', 'me')->middleware('auth');
+});
+
+Route::group([
+    'middleware' => ['api', 'auth'],
+    'prefix' => 'movies',
+    'controller' => MovieController::class
+], function () {
+    Route::get('', 'index');
+    Route::post('', 'store');
+    Route::get('{movie}', 'show');
+    Route::delete('{movie}', 'destroy');
+});
+
+
+Route::group([
+    'middleware' => ['api', 'auth'],
+    'prefix' => 'categories',
+    'controller' => CategoryController::class
+], function () {
+    Route::get('', 'index');
 });
