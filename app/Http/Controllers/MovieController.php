@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Movie;
 use App\Http\Requests\StoreMovieRequest;
 use App\Http\Requests\UpdateMovieRequest;
+use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 
 class MovieController extends Controller
@@ -14,9 +15,24 @@ class MovieController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        $movies = Movie::with('category')->latest()->paginate(10);
+        $category = $request->input('category');
+        $search = $request->input('search');
+
+        $movies = Movie::with('category');
+
+        if ($category) {
+            $movies->where('category_id', '=', $category);
+        }
+
+        if ($search) {
+            $movies->where('title', 'like', "%{$search}%");
+        }
+
+        $movies = $movies->latest()->paginate(10);
+
+
         foreach ($movies as $movie) {
             $movie['description'] = Str::limit($movie['description'], 40, ' ...');
         }
@@ -80,7 +96,7 @@ class MovieController extends Controller
      * @param  \App\Models\Movie  $movie
      * @return \Illuminate\Http\Response
      */
-    public function update(UpdateMovieRequest $request, Movie $movie)
+    public function update(Request $request, Movie $movie)
     {
         //
     }
