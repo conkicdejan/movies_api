@@ -41,7 +41,7 @@ Route::group([
 
 
 Route::group([
-    'middleware' => ['api', 'auth'],
+    'middleware' => ['api'],
     'prefix' => 'categories',
     'controller' => CategoryController::class
 ], function () {
