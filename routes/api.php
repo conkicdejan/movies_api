@@ -37,6 +37,7 @@ Route::group([
     Route::post('', 'store');
     Route::get('{movie}', 'show');
     Route::delete('{movie}', 'destroy');
+    Route::put('{movie}', 'update');
 });
 
 
