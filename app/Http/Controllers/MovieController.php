@@ -6,6 +6,7 @@ use App\Models\Movie;
 use App\Http\Requests\StoreMovieRequest;
 use App\Http\Requests\UpdateMovieRequest;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 
 class MovieController extends Controller
@@ -35,6 +36,7 @@ class MovieController extends Controller
 
         foreach ($movies as $movie) {
             $movie['description'] = Str::limit($movie['description'], 40, ' ...');
+            $movie->loadData();
         }
 
         return response()->json($movies);
@@ -73,7 +75,9 @@ class MovieController extends Controller
      */
     public function show(Movie $movie)
     {
-        $movie->load('category');
+        $movie->increment('visited');
+
+        $movie->loadData();
 
         return response()->json($movie);
     }
@@ -96,9 +100,15 @@ class MovieController extends Controller
      * @param  \App\Models\Movie  $movie
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Movie $movie)
+    public function update(UpdateMovieRequest $request, Movie $movie)
     {
-        //
+
+        $validated = $request->validated();
+
+        $movie->users()->syncWithoutDetaching([Auth::id() => $validated]);
+
+        $movie->loadData();
+        return response()->json($movie);
     }
 
     /**
