@@ -5,6 +5,8 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 
 class Movie extends Model
 {
@@ -39,9 +41,14 @@ class Movie extends Model
 
     public function loadData()
     {
-        $this->load('category');
+        $this->load(['category']);
         $this['like'] = $this->getCurrentUserLikes();
         $this['total_likes'] = $this->getTotalLikesDislikes(true);
         $this['total_dislikes'] = $this->getTotalLikesDislikes(false);
+    }
+
+    public function comments()
+    {
+        return $this->hasMany(Comment::class);
     }
 }

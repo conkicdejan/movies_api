@@ -19,6 +19,7 @@ class DatabaseSeeder extends Seeder
         $this->call([
             CategorySeeder::class,
             MovieSeeder::class,
+            CommentSeeder::class,
         ]);
 
         // \App\Models\User::factory()->create([

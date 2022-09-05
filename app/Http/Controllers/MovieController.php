@@ -78,8 +78,9 @@ class MovieController extends Controller
         $movie->increment('visited');
 
         $movie->loadData();
+        $comments = $movie->comments()->with('user')->latest()->paginate(3);
 
-        return response()->json($movie);
+        return response()->json(['movie' => $movie, 'comments' => $comments]);
     }
 
     /**
