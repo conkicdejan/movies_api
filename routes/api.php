@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\CommentController;
 use App\Http\Controllers\MovieController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -47,4 +48,13 @@ Route::group([
     'controller' => CategoryController::class
 ], function () {
     Route::get('', 'index');
+});
+
+
+Route::group([
+    'middleware' => ['api'],
+    'prefix' => 'comments',
+    'controller' => CommentController::class
+], function () {
+    Route::post('', 'store')->middleware('auth');
 });

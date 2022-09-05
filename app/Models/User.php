@@ -57,4 +57,9 @@ class User extends Authenticatable implements JWTSubject
     {
         return $this->belongsToMany(Movie::class)->withPivot(['like']);
     }
+
+    public function comments()
+    {
+        return $this->hasMany(Comment::class);
+    }
 }
