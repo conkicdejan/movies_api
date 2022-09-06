@@ -20,6 +20,7 @@ class DatabaseSeeder extends Seeder
             CategorySeeder::class,
             MovieSeeder::class,
             CommentSeeder::class,
+            WatchListSeeder::class,
         ]);
 
         // \App\Models\User::factory()->create([

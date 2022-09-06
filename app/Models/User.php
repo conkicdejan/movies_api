@@ -6,6 +6,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\Auth;
 use Laravel\Sanctum\HasApiTokens;
 use PHPOpenSourceSaver\JWTAuth\Contracts\JWTSubject;
 
@@ -58,8 +59,18 @@ class User extends Authenticatable implements JWTSubject
         return $this->belongsToMany(Movie::class)->withPivot(['like']);
     }
 
+    public function watches()
+    {
+        return $this->belongsToMany(Movie::class, 'watch_lists')->withPivot(['watched']);
+    }
+
     public function comments()
     {
         return $this->hasMany(Comment::class);
+    }
+
+    public function getUserWatchList()
+    {
+        return $this->watches()->wherePivotNotNull('watched')->pluck('movie_id');
     }
 }
