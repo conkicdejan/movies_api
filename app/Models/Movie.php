@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
+
 class Movie extends Model
 {
     use HasFactory;
@@ -39,12 +40,23 @@ class Movie extends Model
         return $this->belongsToMany(User::class)->withPivot(['like']);
     }
 
+    public function watches()
+    {
+        return $this->belongsToMany(User::class, 'watch_lists')->withPivot(['watched']);
+    }
+
+    public function getCurrentUserWatched()
+    {
+        return $this->watches()->where('user_id', Auth::id())->first()?->pivot->watched;
+    }
+
     public function loadData()
     {
         $this->load(['category']);
         $this['like'] = $this->getCurrentUserLikes();
         $this['total_likes'] = $this->getTotalLikesDislikes(true);
         $this['total_dislikes'] = $this->getTotalLikesDislikes(false);
+        $this['watched'] = $this->getCurrentUserWatched();
     }
 
     public function comments()

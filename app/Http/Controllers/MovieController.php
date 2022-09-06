@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Movie;
 use App\Http\Requests\StoreMovieRequest;
 use App\Http\Requests\UpdateMovieRequest;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
@@ -18,8 +19,10 @@ class MovieController extends Controller
      */
     public function index(Request $request)
     {
+        $user = Auth::user();
         $category = $request->input('category');
         $search = $request->input('search');
+        $myMoviesList = $request->input('my_movies');
 
         $movies = Movie::with('category');
 
@@ -31,11 +34,15 @@ class MovieController extends Controller
             $movies->where('title', 'like', "%{$search}%");
         }
 
+        if ($myMoviesList === 'true') {
+            $user_movies = $user->getUserWatchList();
+            $movies->whereIn('id', $user_movies);
+        }
+
         $movies = $movies->latest()->paginate(10);
 
 
         foreach ($movies as $movie) {
-            $movie['description'] = Str::limit($movie['description'], 40, ' ...');
             $movie->loadData();
         }
 
@@ -103,10 +110,15 @@ class MovieController extends Controller
      */
     public function update(UpdateMovieRequest $request, Movie $movie)
     {
+        $like = $request->only('like');
+        $watched = $request->only('watched');
 
-        $validated = $request->validated();
-
-        $movie->users()->syncWithoutDetaching([Auth::id() => $validated]);
+        if ($like) {
+            $movie->users()->syncWithoutDetaching([Auth::id() => $like]);
+        }
+        if ($watched) {
+            $movie->watches()->syncWithoutDetaching([Auth::id() => $watched]);
+        }
 
         $movie->loadData();
         return response()->json($movie);
