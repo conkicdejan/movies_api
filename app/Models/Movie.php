@@ -30,6 +30,18 @@ class Movie extends Model
         return $this->users()->where('like', $value)->count();
     }
 
+    public static function getTopMovies()
+    {
+        return $movies = DB::table('movie_user')
+            ->leftjoin('movies', 'movie_user.movie_id', '=', 'movies.id')
+            ->selectRaw('movie_user.movie_id as id, movies.title as title, count(movie_user.like) as likes')
+            ->where('like', 1)
+            ->groupBy('id')
+            ->orderByDesc('likes')
+            ->limit(10)
+            ->get();
+    }
+
     public function getCurrentUserLikes()
     {
         return $this->users()->where('user_id', Auth::id())->first()?->pivot->like;
