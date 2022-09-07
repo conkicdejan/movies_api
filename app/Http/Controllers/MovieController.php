@@ -49,6 +49,22 @@ class MovieController extends Controller
         return response()->json($movies);
     }
 
+    public function showTopMovies(Request $request)
+    {
+        $movies = Movie::getTopMovies();
+
+        return response()->json($movies);
+    }
+
+    public function showRelatedMovies(Request $request)
+    {
+        $category = $request->input('category');
+
+        $movies = Movie::where('category_id', $category)->inRandomOrder()->limit(10)->get();
+
+        return response()->json($movies);
+    }
+
     /**
      * Show the form for creating a new resource.
      *
