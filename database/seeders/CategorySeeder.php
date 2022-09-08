@@ -19,14 +19,30 @@ class CategorySeeder extends Seeder
     public function run()
     {
         $categories = ([
-            'Action',
-            'Comedy',
-            'Drama',
-            'Fantasy',
-            'Horror',
-            'Mystery',
-            'Romance',
-            'Thriller'
+            "Action",
+            "Adventure",
+            "Animation",
+            "Biography",
+            "Comedy",
+            "Crime",
+            "Documentary",
+            "Drama",
+            "Family",
+            "Fantasy",
+            "Film Noir",
+            "History",
+            "Horror",
+            "Music",
+            "Musical",
+            "Mystery",
+            "Romance",
+            "Sci-Fi",
+            "Short",
+            "Sport",
+            "Superhero",
+            "Thriller",
+            "War",
+            "Western"
         ]);
 
         foreach ($categories as $category) {
