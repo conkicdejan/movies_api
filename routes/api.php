@@ -4,6 +4,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\CommentController;
 use App\Http\Controllers\MovieController;
+use App\Http\Controllers\MovieScoutController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -32,7 +33,8 @@ Route::group([
 Route::group([
     'middleware' => ['api', 'auth'],
     'prefix' => 'movies',
-    'controller' => MovieController::class
+    // 'controller' => MovieController::class
+    'controller' => MovieScoutController::class
 ], function () {
     Route::get('', 'index');
     Route::get('topmovies', 'showTopMovies');

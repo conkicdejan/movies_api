@@ -7,11 +7,19 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
+use Laravel\Scout\Searchable;
+
 
 
 class Movie extends Model
 {
-    use HasFactory;
+    use HasFactory, Searchable;
+
+    public function toSearchableArray()
+    {
+        $array = $this->toArray();
+        return $array;
+    }
 
     protected $fillable = [
         'title',
