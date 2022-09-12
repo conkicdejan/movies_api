@@ -7,11 +7,30 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
+use Laravel\Scout\Searchable;
+use JeroenG\Explorer\Application\Explored;
 
-
-class Movie extends Model
+class Movie extends Model implements Explored
 {
     use HasFactory;
+    use Searchable;
+
+    public function toSearchableArray()
+    {
+        return [
+            'title' => $this->title,
+        ];
+    }
+
+    public function mappableAs(): array //php artisan elastic:update
+    {
+        return [
+            'id' => 'keyword',
+            'title' => 'text',
+            'description' => 'text',
+            'created_at' => 'date',
+        ];
+    }
 
     protected $fillable = [
         'title',

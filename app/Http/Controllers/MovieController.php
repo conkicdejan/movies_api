@@ -24,23 +24,17 @@ class MovieController extends Controller
         $search = $request->input('search');
         $myMoviesList = $request->input('my_movies');
 
-        $movies = Movie::with('category');
-
-        if ($category) {
-            $movies->where('category_id', '=', $category);
-        }
-
-        if ($search) {
-            $movies->where('title', 'like', "%{$search}%");
-        }
-
-        if ($myMoviesList === 'true') {
-            $user_movies = $user->getUserWatchList();
-            $movies->whereIn('id', $user_movies);
-        }
-
-        $movies = $movies->latest()->paginate(10);
-
+        $movies = Movie::search($search)
+            ->query(function ($query) use ($category, $myMoviesList, $user) {
+                if ($category)
+                    $query->where('category_id', '=', $category);
+                if ($myMoviesList === 'true') {
+                    $user_movies = $user->getUserWatchList();
+                    $query->whereIn('id', $user_movies);
+                }
+            })
+            ->orderBy('created_at')
+            ->paginate(10);
 
         foreach ($movies as $movie) {
             $movie->loadData();
