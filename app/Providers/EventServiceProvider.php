@@ -20,9 +20,6 @@ class EventServiceProvider extends ServiceProvider
         Registered::class => [
             SendEmailVerificationNotification::class,
         ],
-        MovieCreatedEvent::class => [
-            SendMailMovieCreated::class,
-        ]
     ];
 
     /**
@@ -42,6 +39,6 @@ class EventServiceProvider extends ServiceProvider
      */
     public function shouldDiscoverEvents()
     {
-        return false;
+        return true;
     }
 }

@@ -87,8 +87,6 @@ class MovieController extends Controller
         $data = $request->validated();
 
         $movie = Movie::create($data);
-
-        MovieCreatedEvent::dispatch($movie);
         
         return response()->json($movie);
     }
