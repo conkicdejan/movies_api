@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Events\MovieCreatedEvent;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
@@ -18,6 +19,10 @@ class Movie extends Model
         'description',
         'cover_image',
         'category_id'
+    ];
+
+    protected $dispatchesEvents = [
+        'created' => MovieCreatedEvent::class,
     ];
 
     public function category()
