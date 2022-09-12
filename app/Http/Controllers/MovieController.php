@@ -5,10 +5,12 @@ namespace App\Http\Controllers;
 use App\Models\Movie;
 use App\Http\Requests\StoreMovieRequest;
 use App\Http\Requests\UpdateMovieRequest;
+use App\Mail\MovieCreated;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Mail;
 
 class MovieController extends Controller
 {
@@ -86,6 +88,8 @@ class MovieController extends Controller
         $data = $request->validated();
 
         $movie = Movie::create($data);
+
+        Mail::send(new MovieCreated($movie));
 
         return response()->json($movie);
     }
