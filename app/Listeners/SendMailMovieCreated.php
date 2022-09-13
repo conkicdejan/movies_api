@@ -3,6 +3,7 @@
 namespace App\Listeners;
 
 use App\Events\MovieCreatedEvent;
+use App\Jobs\SendMailJob;
 use App\Mail\MovieCreated;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
@@ -29,6 +30,6 @@ class SendMailMovieCreated
     public function handle(MovieCreatedEvent $event)
     {
         
-        Mail::send(new MovieCreated($event->movie));
+        SendMailJob::dispatch($event);
     }
 }
