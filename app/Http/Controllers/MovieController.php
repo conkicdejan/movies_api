@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\LikeUpdate;
 use App\Events\MovieCreatedEvent;
 use App\Models\Movie;
 use App\Http\Requests\StoreMovieRequest;
@@ -87,7 +88,7 @@ class MovieController extends Controller
         $data = $request->validated();
 
         $movie = Movie::create($data);
-        
+
         return response()->json($movie);
     }
 
@@ -138,6 +139,9 @@ class MovieController extends Controller
         }
 
         $movie->loadData();
+
+        LikeUpdate::dispatch($movie);
+
         return response()->json($movie);
     }
 

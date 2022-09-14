@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\NewComment;
 use App\Models\Comment;
 use App\Http\Requests\StoreCommentRequest;
 use App\Http\Requests\UpdateCommentRequest;
@@ -44,6 +45,8 @@ class CommentController extends Controller
         $newComment->save();
 
         $newComment = $newComment->load('user');
+
+        NewComment::dispatch($newComment);
 
         return response()->json($newComment);
     }
