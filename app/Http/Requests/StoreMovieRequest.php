@@ -26,8 +26,8 @@ class StoreMovieRequest extends FormRequest
         return [
             'title' => 'required|string|max:255',
             'description' => 'required|string|max:1000',
-            'cover_image' => 'required|url|ends_with:jpeg,png,jpg,gif|max:2000',
             'category_id' => 'integer|exists:categories,id',
+            'image' => 'required|mimes:jpeg,png,jpg,gif|max:2000',
         ];
     }
 }

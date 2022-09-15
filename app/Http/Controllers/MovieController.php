@@ -7,10 +7,13 @@ use App\Events\MovieCreatedEvent;
 use App\Models\Movie;
 use App\Http\Requests\StoreMovieRequest;
 use App\Http\Requests\UpdateMovieRequest;
+use App\Models\Image as ImageModel;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use Intervention\Image\Facades\Image;
 
 class MovieController extends Controller
 {
@@ -46,6 +49,10 @@ class MovieController extends Controller
 
         foreach ($movies as $movie) {
             $movie->loadData();
+            if (isset($movie->image->thumbnail)) {
+                $imageURL = Storage::url(env('IMAGE_THUMBNAIL_FOLDER') . '/' . $movie->image->thumbnail);
+                $movie['thumbnail'] = $imageURL;
+            }
         }
 
         return response()->json($movies);
@@ -85,9 +92,43 @@ class MovieController extends Controller
      */
     public function store(StoreMovieRequest $request)
     {
+
         $data = $request->validated();
 
+        //Create movie
         $movie = Movie::create($data);
+
+        //Get image from request
+        $image = $data['image'];
+
+        //Resize image
+        $imageFullSize = Image::make($image->getRealPath());
+        $imageFullSize->resize(400, 400, function ($constraint) {
+            $constraint->aspectRatio();
+        });
+        $imageThumbnail = Image::make($image->getRealPath());
+        $imageThumbnail->resize(200, 200, function ($constraint) {
+            $constraint->aspectRatio();
+        });
+
+        //Set images path & name
+        $imageFullSizePath = public_path("storage\\" . env('IMAGE_FULL_SIZE_FOLDER'));
+        $imageThumbnailPath = public_path("storage\\" . env('IMAGE_THUMBNAIL_FOLDER'));
+        $imageFullSizeName = $movie->id . '-full_size.' . $image->extension();
+        $imageThumbnailName = $movie->id . '-thumbnail.' . $image->extension();
+
+        //Store to disk
+        $imageFullSize->save($imageFullSizePath . "\\" . $imageFullSizeName);
+        $imageThumbnail->save($imageThumbnailPath . "\\" . $imageThumbnailName);
+
+        //Add images data to table
+        ImageModel::updateOrCreate(
+            ['movie_id' => $movie->id],
+            [
+                'full_size' => $imageFullSizeName,
+                'thumbnail' => $imageThumbnailName
+            ]
+        );
 
         return response()->json($movie);
     }
@@ -104,6 +145,11 @@ class MovieController extends Controller
 
         $movie->loadData();
         $comments = $movie->comments()->with('user')->latest()->paginate(3);
+
+        if (isset($movie->image->full_size)) {
+            $imageURL = Storage::url(env('IMAGE_FULL_SIZE_FOLDER') . '/' . $movie->image->full_size);
+            $movie['full_size'] = $imageURL;
+        };
 
         return response()->json(['movie' => $movie, 'comments' => $comments]);
     }

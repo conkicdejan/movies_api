@@ -80,4 +80,9 @@ class Movie extends Model
     {
         return $this->hasMany(Comment::class);
     }
+
+    public function image()
+    {
+        return $this->hasOne(Image::class);
+    }
 }
