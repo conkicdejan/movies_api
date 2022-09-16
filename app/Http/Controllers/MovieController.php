@@ -178,6 +178,13 @@ class MovieController extends Controller
         $watched = $request->only('watched');
 
         if ($like) {
+            $likedAlready = $movie->users()
+                ->where('user_id',  Auth::id())
+                ->where('like', 1)
+                ->first();
+            if ($likedAlready) {
+                throw new \Exception('Cannot like multiple times');
+            }
             $movie->users()->syncWithoutDetaching([Auth::id() => $like]);
         }
         if ($watched) {
