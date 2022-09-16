@@ -11,6 +11,15 @@ use Tests\TestCase;
 
 class LikeTest extends TestCase
 {
+
+    protected $user;
+
+    public function setUp(): void
+    {
+        parent::setUp();
+        $this->user = User::factory()->create();
+    }
+
     /**
      * A basic feature test example.
      *
@@ -19,19 +28,17 @@ class LikeTest extends TestCase
     public function test_user_can_like()
     {
 
-        $user = User::find(10);
-
         $payload = [
             'like' => 1,
         ];
 
-        $response = $this->actingAs($user);
+        $response = $this->actingAs($this->user);
 
         $response = $this->json('put', '/api/movies/1', $payload);
 
         $this->assertDatabaseHas('movie_user', [
             'movie_id' => '1',
-            'user_id' => $user->id,
+            'user_id' => $this->user->id,
             'like' => 1,
         ]);
     }
@@ -39,15 +46,14 @@ class LikeTest extends TestCase
     public function test_user_can_like_againg()
     {
 
-        $user = User::find(10);
-
         $payload = [
             'like' => 1,
         ];
 
-        $response = $this->actingAs($user);
+        $response = $this->actingAs($this->user);
 
         $response = $this->json('put', '/api/movies/1', $payload);
+        // $response->dd();
 
         $response = $response['message'];
 
